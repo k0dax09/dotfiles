@@ -1,0 +1,27 @@
+/* wlogout — generated from colorscheme.py (wallpaper palette) */
+@define-color bg      @{bg_t};
+@define-color fg      @{fg};
+@define-color accent  @{accent};
+@define-color hover   @{accent}33;
+
+window {
+  background-color: @bg;
+}
+
+button {
+  background-color: transparent;
+  color: @fg;
+  font-size: 24px;
+  font-family: "JetBrains Mono Nerd Font";
+  border: 1px solid transparent;
+  border-radius: 16px;
+  margin: 4px;
+  min-width: 96px;
+  min-height: 96px;
+}
+
+button:hover {
+  background-color: @hover;
+  border-color: @accent;
+  color: @accent;
+}

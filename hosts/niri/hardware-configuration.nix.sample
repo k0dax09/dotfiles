@@ -1,0 +1,55 @@
+# hardware-configuration.nix — SAMPLE
+#
+# Real one is generated on install with:  nixos-generate-config --root /mnt
+# It detects your disk layout. THIS FILE IS A REFERENCE for an LUKS setup.
+# Copy/adapt it into hosts/niri/hardware-configuration.nix and uncomment the
+# import in configuration.nix.
+
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-amd" ];   # or "kvm-intel"
+  boot.extraModulePackages = [ ];
+
+  # ────────────── LUKS (encrypted root) ──────────────
+  boot.initrd.luks.devices."luksroot" = {
+    device = "/dev/disk/by-uuid/01234567-89ab-cdef-0123-456789abcdef"; # ← твой UUID
+    allowDiscards = true;   # TRIM для SSD
+  };
+
+  fileSystems."/" = {
+    device = "/dev/mapper/luksroot";
+    fsType = "btrfs";       # или ext4
+    options = [ "compress=zstd" "subvol=@" ];
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/ABCD-1234";   # ESP (EFI) раздел
+    fsType = "vfat";
+    options = [ "fmask=0077" "dmask=0077" ];
+  };
+
+  # ────────────── Swap (optional; encrypted if under LVM/LUKS) ──────────────
+  # swapDevices = [ { device = "/dev/mapper/swap"; } ];
+  # boot.initrd.luks.devices."swap" = {
+  #   device = "/dev/disk/by-uuid/...";
+  #   keyFile = "/dev/mapper/luksroot";
+  #   allowDiscards = true;
+  # };
+
+  # ────────────── GPU firmware / microcode ──────────────
+  hardware.cpu.amd.updateMicrocode = true;   # or intel
+  hardware.graphics.enable = true;
+
+  powerManagement.cpuFreqGovernor = "schedutil";
+
+  # Prevents dmesg spam; harmless.
+  boot.kernelParams = [ "quiet" ];
+
+  # NixOS generates this value — don't change.
+  system.stateVersion = "24.11";
+}

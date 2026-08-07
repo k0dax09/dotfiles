@@ -1,0 +1,31 @@
+# alacritty colors — default theme (overwritten by wallpaper.sh's colorscheme)
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "0x1A1B26"
+foreground = "0xC0CAF5"
+
+[colors.cursor]
+text = "0x1A1B26"
+cursor = "0x7AA2F7"
+
+[colors.normal]
+black = "0x1A1B26"
+red = "0xF7768E"
+green = "0x9ECE6A"
+yellow = "0xE0AF68"
+blue = "0x7AA2F7"
+magenta = "0xBB9AF7"
+cyan = "0x7DCFFF"
+white = "0xC0CAF5"
+
+[colors.bright]
+black = "0x3B4261"
+red = "0xF7768E"
+green = "0x9ECE6A"
+yellow = "0xE0AF68"
+blue = "0x7AA2F7"
+magenta = "0xBB9AF7"
+cyan = "0x7DCFFF"
+white = "0xE0E0E0"

@@ -1,0 +1,60 @@
+{
+  "log": {
+    "level": "info",
+    "timestamp": true
+  },
+
+  "dns": {
+    "servers": [
+      {
+        "tag": "cf",
+        "address": "https://1.1.1.1/dns-query",
+        "detour": "proxy",
+        "strategy": "ipv4_only"
+      },
+      { "tag": "local", "address": "local" }
+    ],
+    "final": "cf"
+  },
+
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "anirevpn0",
+      "address": ["10.8.0.1/30"],
+      "mtu": 1500,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "gvisor"
+    }
+  ],
+
+  "outbounds": [
+    { "type": "direct", "tag": "direct" },
+    { "type": "block", "tag": "block" },
+
+    {
+      "type": "vless",
+      "tag": "proxy",
+      "server": "YOUR_SERVER_ADDRESS",
+      "server_port": 443,
+      "uuid": "YOUR_UUID",
+      "packet_encoding": "xudp",
+      "tls": {
+        "enabled": true,
+        "server_name": "YOUR_SERVER_NAME"
+      }
+    }
+  ],
+
+  "route": {
+    "final": "proxy",
+    "auto_detect_interface": true,
+    "default_mark": 1,
+    "rules": [
+      { "action": "sniff" },
+      { "protocol": "dns", "action": "hijack-dns" }
+    ]
+  }
+}

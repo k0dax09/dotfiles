@@ -1,0 +1,41 @@
+// ────────────── Window & layer rules ──────────────
+
+    // Rounded, clipped corners on every window.
+    window-rule {
+        geometry-corner-radius 18
+        clip-to-geometry true
+    }
+
+    // Subtle backdrop blur behind every window.
+    window-rule {
+        background-effect {
+            blur true
+            xray false
+        }
+    }
+
+    // Launcher / panels should float.
+    window-rule {
+        match app-id="fuzzel"
+        open-floating true
+        default-column-width { fixed 900; }
+    }
+
+    // Steam
+    window-rule {
+        match app-id="steam"
+        exclude title=r#"^[Ss]team$"#
+        open-floating true
+    }
+    window-rule {
+       match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
+       default-floating-position x=10 y=10 relative-to="bottom-right"
+       open-focused false
+    }
+
+    // waybar sits at the top; let it float above windows.
+    layer-rule {
+        match namespace="^waybar"
+        place-within-backdrop false
+        exclusive-zone "bottom"
+    }

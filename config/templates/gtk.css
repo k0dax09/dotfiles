@@ -1,0 +1,32 @@
+/* GTK accent overlay — generated from colorscheme.py (wallpaper palette).
+   Loaded as ~/.config/gtk-3.0/gtk.css and ~/.config/gtk-4.0/gtk.css.
+   Overrides the base dark theme with the wallpaper accent. */
+@define-color accent @{accent};
+@define-color bg_color @{bg};
+@define-color base_color @{bg_alt};
+@define-color fg_color @{fg};
+@define-color selected_bg_color @{accent};
+@define-color selected_fg_color @{bg};
+
+* {
+  outline-color: @{accent};
+}
+
+selection {
+  background-color: @{accent};
+  color: @{bg};
+}
+
+treeview, list, row:selected {
+  background-color: @{accent};
+  color: @{bg};
+}
+
+button:checked {
+  background-color: @{accent};
+  color: @{bg};
+}
+
+progressbar trough progress {
+  background-color: @{accent};
+}

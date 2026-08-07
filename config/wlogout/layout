@@ -1,0 +1,29 @@
+$BINDIR = /run/current-system/sw/bin
+$LOGOFF  = $BINDIR/loginctl terminate-user $USER
+
+$type = wayland
+
+[box]
+  margin = 0
+  spacing = 40
+
+  [box]
+    orientation = horizontal
+    spacing = 30
+    margin = 0
+
+    [button]
+      label = ⏻
+      action = systemctl poweroff
+    [button]
+      label = ⟲
+      action = reboot
+    [button]
+      label = 🔒
+      action = loginctl lock-session
+    [button]
+      label = 👤
+      action = loginctl terminate-user
+    [button]
+      label = ⏾
+      action = systemctl suspend

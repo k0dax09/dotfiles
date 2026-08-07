@@ -1,0 +1,28 @@
+// ────────────── Miscellaneous / environment ──────────────
+
+    screenshot-path null
+
+    environment {
+        XDG_CURRENT_DESKTOP "niri"
+        XDG_SESSION_TYPE "wayland"
+        QT_QPA_PLATFORM "wayland"
+        QT_QPA_PLATFORMTHEME "gtk3"
+        QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+        ELECTRON_OZONE_PLATFORM_HINT "auto"
+        MOZ_ENABLE_WAYLAND "1"
+    }
+
+    blur {
+        passes 2
+        offset 3.0
+        noise 0.03
+        saturation 1.0
+    }
+
+    hotkey-overlay {
+        skip-at-startup
+    }
+
+    debug {
+        honor-xdg-activation-with-invalid-serial
+    }

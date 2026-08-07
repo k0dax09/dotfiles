@@ -1,0 +1,7 @@
+// ────────────── Cursor ──────────────
+// Use 'niri msg cursor' to inspect active theme.
+
+    cursor {
+        xcursor-theme "capitaine-cursors"
+        xcursor-size 24
+    }

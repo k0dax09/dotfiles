@@ -1,0 +1,32 @@
+# alacritty colors — generated from colorscheme.py (wallpaper palette)
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "@{bg}"
+foreground = "@{fg}"
+
+[colors.cursor]
+text = "@{bg}"
+cursor = "@{accent}"
+
+[colors.normal]
+black = "@{bg_alt}"
+red = "@{red}"
+green = "@{green}"
+yellow = "@{yellow}"
+blue = "@{accent}"
+magenta = "@{magenta}"
+cyan = "@{cyan}"
+white = "@{fg}"
+
+[colors.bright]
+black = "@{surface}"
+red = "@{red}"
+green = "@{green}"
+yellow = "@{yellow}"
+blue = "@{accent}"
+magenta = "@{magenta}"
+cyan = "@{cyan}"
+white = "@{fg}"

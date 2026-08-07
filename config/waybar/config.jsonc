@@ -1,0 +1,99 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "spacing": 8,
+  "margin-top": 6,
+  "margin-left": 8,
+  "margin-right": 8,
+  "margin-bottom": 0,
+  "modules-left": ["niri/workspaces", "niri/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["custom/media", "bluetooth", "pulseaudio", "network", "custom/vpn", "cpu", "memory", "battery", "tray"],
+
+  "niri/workspaces": {
+    "format": "{name}",
+    "format-icons": {
+      "1": "1", "2": "2", "3": "3", "4": "4", "5": "5",
+      "6": "6", "7": "7", "8": "8", "9": "9"
+    },
+    "on-click": "activate",
+    "sort-by-number": true
+  },
+
+  "niri/window": {
+    "format": "{title}",
+    "max-length": 40
+  },
+
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%a %d %b %H:%M}",
+    "tooltip-format": "{:%A %d %B %Y}"
+  },
+
+  "custom/media": {
+    "exec": "media.sh --current",
+    "exec-if": "playerctl status",
+    "interval": 5,
+    "on-click": "media.sh",
+    "max-length": 34,
+    "signal": 2
+  },
+
+  "bluetooth": {
+    "exec": "bluetooth.sh status",
+    "interval": 10,
+    "on-click": "bluetooth.sh",
+    "format": "{}"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "muted",
+    "format-icons": { "default": ["", "", ""] },
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  },
+
+  "network": {
+    "format-disconnected": "disconnected",
+    "format-ethernet": "{ifname}",
+    "format-wifi": "{essid} ({signalStrength}%)",
+    "on-click": "wifi.sh",
+    "tooltip-format": "{ifname}: {ipaddr}"
+  },
+
+  "custom/vpn": {
+    "format": "{} 󰅎",
+    "exec": "proxy.sh status",
+    "exec-if": "test -s /etc/anirevpn/config.json",
+    "interval": 10,
+    "on-click": "proxy.sh toggle",
+    "on-click-right": "proxy.sh toggle",
+    "tooltip": "VPN (anirevpn): click to toggle"
+  },
+
+  "cpu": {
+    "format": "cpu {usage}%",
+    "states": { "warning": 85 }
+  },
+
+  "memory": {
+    "format": "ram {}%",
+    "states": { "warning": 85 }
+  },
+
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-charging": "{icon} {capacity}%",
+    "format-icons": ["", "", "", ""],
+    "states": { "critical": 10, "warning": 30 }
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8
+  }
+}

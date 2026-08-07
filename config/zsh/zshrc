@@ -1,0 +1,54 @@
+# zsh — niri dotfiles (loaded via home-manager programs.zsh.initExtra)
+
+# ── Prompt (star/arrow) ─────────────────────────────
+setopt PROMPT_SUBST
+autoload -Uz add-zsh-hook
+PROMPT='%(?.%F{green}❯.%F{red}✗)%f %F{cyan}%~%f %F{magenta}%#%f '
+
+# ── History (shared, no dups) ───────────────────────
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE="$HOME/.zsh_history"
+setopt HIST_IGNORE_ALL_DUPS SHARE_HISTORY HIST_REDUCE_BLANKS
+
+# ── Behaviour ───────────────────────────────────────
+setopt AUTO_CD               # type dir to cd
+setopt CORRECT               # fix typos
+setopt NO_BEEP
+unsetopt menu_complete
+setopt AUTO_LIST
+setopt AUTO_MENU
+bindkey '^[[Z' reverse-menu-complete   # Shift+Tab
+
+# ── Navigation / history ───────────────────────────────
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
+bindkey '^R' history-search-backward
+
+# ── Aliases ─────────────────────────────────────────────
+alias ls='ls --color=auto'
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -l'
+alias cls='clear'
+alias grp='rg'
+alias fxd='fdfind'
+alias v='nvim'
+alias grep='grep --color=auto'
+
+# ── Convenience (niri scripts) ───────────────────────────
+alias vpn='proxy.sh'
+alias lock='lock.sh'
+alias shot='shot.sh region'
+alias rec='rec.sh toggle'
+
+# ── Editor ──────────────────────────────────────────────
+export EDITOR='nvim'
+export VISUAL='nvim'
+
+# ── SSH agent ───────────────────────────────────────────
+if [ -n "$SSH_AUTH_SOCK" ]; then
+  :
+else
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+  export SSH_AGENT

@@ -1,0 +1,61 @@
+{
+  "log": { "loglevel": "info" },
+
+  "dns": {
+    "servers": [
+      {
+        "address": "https+local://1.1.1.1/dns-query",
+        "domains": ["geosite:category-ads-all"],
+        "expectIPs": []
+      }
+    ],
+    "queryStrategy": "UseIP"
+  },
+
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "protocol": "socks",
+      "sniffing": { "enabled": true, "destOverride": ["http", "tls"] }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 10809,
+      "protocol": "http"
+    }
+  ],
+
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "tag": "proxy",
+      "settings": {
+        "vnext": [
+          {
+            "address": "YOUR_SERVER_ADDRESS",
+            "port": 443,
+            "users": [
+              { "id": "YOUR_UUID", "encryption": "none", "flow": "" }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "tls",
+        "tlsSettings": { "serverName": "YOUR_SERVER_NAME" }
+      }
+    },
+    { "protocol": "freedom", "tag": "direct" },
+    { "protocol": "blackhole", "tag": "block" }
+  ],
+
+  "routing": {
+    "rules": [
+      { "type": "field", "outboundTag": "block", "domain": ["geosite:category-ads-all"] },
+      { "type": "field", "ip": ["geoip:private"], "outboundTag": "direct" }
+    ],
+    "domainStrategy": "IPIfNonMatch"
+  }
+}

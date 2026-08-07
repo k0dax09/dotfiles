@@ -1,0 +1,27 @@
+// ────────────── Input ──────────────
+// Keyboard, touchpad, mouse + focus behaviour.
+
+    input {
+        keyboard {
+            xkb {
+                layout "us,ru"
+                variant ""
+                // переключение раскладки: Alt+Shift (или Win+Space)
+                options "grp:alt_shift_toggle"
+            }
+            numlock
+        }
+
+        touchpad {
+            tap
+            natural-scroll
+        }
+
+        mouse {
+            accel-profile "flat"
+            accel-speed 0.0
+        }
+
+        focus-follows-mouse
+        workspace-auto-back-and-forth
+    }

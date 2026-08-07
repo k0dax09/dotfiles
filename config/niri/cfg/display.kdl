@@ -1,0 +1,15 @@
+// ────────────── Output / Display ──────────────
+// Run `niri msg outputs` for your actual monitor names.
+// Uncomment and set per-monitor mode/scale.
+
+/- output "eDP-1" {
+    mode "2560x1600@165.003"
+    scale 2
+}
+
+/- output "DP-2" {
+    mode "2560x1440@359.979"
+    scale 1
+}
+
+    prefer-no-csd

@@ -1,0 +1,21 @@
+# Editor / OS junk
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Nix
+result
+result-*
+.direnv
+.envrc
+
+# Caches
+.cache/
+
+# VM images / ISOs
+*.iso
+*.qcow2
+*.img
+*.vmdk
+vm/

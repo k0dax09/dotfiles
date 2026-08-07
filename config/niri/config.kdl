@@ -1,0 +1,18 @@
+// niri — Wayland compositor config (main entry)
+// Every concern lives in its own file under cfg/.
+// Docs: https://github.com/YaLTeR/niri/wiki/Configuration
+
+include "./cfg/animation.kdl"
+include "./cfg/autostart.kdl"
+include "./cfg/cursor.kdl"
+include "./cfg/display.kdl"
+include "./cfg/input.kdl"
+include "./cfg/keybinds.kdl"
+include "./cfg/layout.kdl"
+include "./cfg/misc.kdl"
+include "./cfg/rules.kdl"
+
+binds {
+    // Core structural binds (must exist even if splits overlap)
+    // defined in cfg/keybinds.kdl
+}

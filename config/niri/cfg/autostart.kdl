@@ -1,0 +1,6 @@
+// ────────────── Autostart ──────────────
+// Apps spawned once when the niri session starts.
+// The bulk of session apps live in ~/.local/bin/autostart.sh (repo: scripts/).
+
+    spawn-at-startup "waybar"
+    spawn-at-startup "sh" "-c" "${HOME}/.local/bin/autostart.sh"
