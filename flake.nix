@@ -20,10 +20,10 @@
       system = "x86_64-linux";
 
       # ── Overlays from this repo (custom packages like helium) ──────────
-      myOverlays = [
+      overlays = [
         (import ./pkgs/helium/overlay.nix)
       ];
-      pkgs = import nixpkgs { inherit system; overlays = myOverlays; };
+      pkgs = import nixpkgs { inherit system; overlays; };
 
       # ── Auto-discover hosts: every folder under ./hosts with a default.nix ──
       hosts = builtins.filter
@@ -35,7 +35,7 @@
         inherit system;
         specialArgs = { inherit inputs overlays; };
         modules = [
-          { nixpkgs.overlays = myOverlays; }
+          { nixpkgs.overlays = overlays; }
           (./hosts + "/${hostName}/default.nix")
 
           home-manager.nixosModules.home-manager
