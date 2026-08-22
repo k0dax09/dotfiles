@@ -15,55 +15,107 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, niri, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      niri,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
 
-      # ── Overlays from this repo (custom packages like helium) ──────────
+      # Overlays from this repository
       overlays = [
         (import ./pkgs/helium/overlay.nix)
       ];
-      pkgs = import nixpkgs { inherit system; overlays; };
 
-      # ── Auto-discover hosts: every folder under ./hosts with a default.nix ──
+      pkgs = import nixpkgs {
+        inherit system overlays;
+      };
+
+      # Automatically discover hosts that contain default.nix
       hosts = builtins.filter
-        (name: builtins.pathExists (./hosts + "/${name}/default.nix"))
+        (
+          name:
+          builtins.pathExists (
+            ./hosts + "/${name}/default.nix"
+          )
+        )
         (builtins.attrNames (builtins.readDir ./hosts));
 
-      # Build one NixOS config per host.
-      nixosConfig = hostName: nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs overlays; };
-        modules = [
-          { nixpkgs.overlays = overlays; }
-          (./hosts + "/${hostName}/default.nix")
+      # Build one NixOS configuration per host
+      nixosConfig =
+        hostName:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
 
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = { inherit inputs overlays; };
-            home-manager.users.user = import (./home + "/${hostName}/home.nix");
-          }
-        ];
-      };
+          specialArgs = {
+            inherit inputs overlays;
+          };
 
-      # One standalone home-manager config per host (fast, user-only).
-      homeConfig = hostName: home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        extraSpecialArgs = { inherit inputs overlays; };
-        modules = [ (./home + "/${hostName}/home.nix") ];
-      };
+          modules = [
+            {
+              nixpkgs.overlays = overlays;
+            }
+
+            (./hosts + "/${hostName}/default.nix")
+
+            home-manager.nixosModules.home-manager
+
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+
+              home-manager.extraSpecialArgs = {
+                inherit inputs overlays;
+              };
+
+              home-manager.users.user =
+                import (./home + "/${hostName}/home.nix");
+            }
+          ];
+        };
+
+      # Standalone Home Manager configuration per host
+      homeConfig =
+        hostName:
+        home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+
+          extraSpecialArgs = {
+            inherit inputs overlays;
+          };
+
+          modules = [
+            (./home + "/${hostName}/home.nix")
+          ];
+        };
     in
     {
-      nixosConfigurations = builtins.listToAttrs (map
-        (name: { name = name; value = nixosConfig name; })
-        hosts);
+      nixosConfigurations = builtins.listToAttrs (
+        map
+          (
+            name: {
+              inherit name;
+              value = nixosConfig name;
+            }
+          )
+          hosts
+      );
 
-      homeConfigurations = builtins.listToAttrs (map
-        (name: { name = name; value = homeConfig name; })
-        hosts);
+      homeConfigurations = builtins.listToAttrs (
+        map
+          (
+            name: {
+              inherit name;
+              value = homeConfig name;
+            }
+          )
+          hosts
+      );
 
-      formatter.${system} = pkgs.nixfmt-rfc-style;
+      "formatter.${system}" = pkgs.nixfmt-rfc-style;
     };
 }
