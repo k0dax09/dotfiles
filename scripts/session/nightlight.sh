@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # nightlight.sh — toggle blue-light filter (gammastep/wlsunset).
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 if pgrep -x gammastep >/dev/null 2>&1; then
   pkill -x gammastep

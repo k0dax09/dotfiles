@@ -3,7 +3,7 @@
 #   ./wifi.sh               # interactive connect/disconnect menu
 #   ./wifi.sh status        # one-line summary for waybar
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 status() {
   local active

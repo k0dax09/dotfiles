@@ -3,7 +3,7 @@
 #   rec.sh         # start/stop; saves to ~/Videos/Recordings/rec_<ts>.mp4
 #   rec.sh stop    # stop only
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 DIR="${XDG_VIDEOS_DIR:-$HOME/Videos}/Recordings"
 mkdir -p "$DIR"

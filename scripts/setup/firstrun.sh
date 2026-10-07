@@ -3,7 +3,7 @@
 # Run once after `install.sh`:
 #   ./scripts/firstrun.sh
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 # 1. Standard directories
 mkdir -p \

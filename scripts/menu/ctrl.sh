@@ -2,7 +2,7 @@
 # ctrl.sh — quick control center: volume, brightness, wifi, bluetooth.
 # Bound in niri (Mod+Shift+C). Uses fuzzel as a compact toggle panel.
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 menu_ctrl() {
   local action

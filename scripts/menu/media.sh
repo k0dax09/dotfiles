@@ -3,7 +3,7 @@
 #   ./media.sh --current     # short now-playing for waybar
 #   ./media.sh                # interactive control menu
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 current() {
   local playing="$(playerctl metadata --format '{{trunc(title,30)}} — {{artist}}' 2>/dev/null)"

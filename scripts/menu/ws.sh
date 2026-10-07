@@ -2,7 +2,7 @@
 # ws.sh — visual workspace switcher (pick a desktop via fuzzel).
 # Использует JSON-вывод niri, а не парсинг человекочитаемого текста.
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 active="$(niri msg -j workspaces 2>/dev/null \
   | jq -r '.[] | select(.is_active) | .idx' \

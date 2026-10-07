@@ -9,7 +9,7 @@
 # (networking.wireguard.interfaces.wg0) or a wg-quick file:
 #   sudo nvim /etc/wireguard/wg0.conf   # → ifcfg, no manual IP needed
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 IFACE="wg0"
 ENDPOINT="${VPN_ENDPOINT:-}"   # e.g. "vpn.example.com" — used to keep the tunnel reachable

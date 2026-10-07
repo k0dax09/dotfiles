@@ -3,7 +3,7 @@
 #   osd.sh volume up|down|mute
 #   osd.sh bright up|down
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 SINK="@DEFAULT_AUDIO_SINK@"
 

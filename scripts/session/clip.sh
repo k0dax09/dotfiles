@@ -4,7 +4,7 @@
 #   ./clip.sh pick           # pick an entry and copy it (bound in niri)
 #   ./clip.sh clear          # wipe history
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 case "${1:-pick}" in
   store) wl-paste --watch cliphist store & disown ;;

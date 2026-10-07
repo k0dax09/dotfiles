@@ -3,21 +3,20 @@
 # vm.sh — boot a NixOS VM (x86_64) with the dotfiles repo shared from the host.
 #
 # Modes:
-#   ./scripts/vm.sh boot [iso]     Boot installer ISO with repo shared
-#   ./scripts/vm.sh install [iso]  Same as boot + install hints
-#   ./scripts/vm.sh run            Build flake config as runnable VM (needs nix)
-#   ./scripts/vm.sh download       Just download the NixOS ISO
-#   ./scripts/vm.sh disk           Create the qcow2 disk (see VM_DISK env)
+#   ./scripts/dev/vm.sh boot [iso]     Boot installer ISO with repo shared
+#   ./scripts/dev/vm.sh install [iso]  Same as boot + install hints
+#   ./scripts/dev/vm.sh run            Build flake config as runnable VM
+#   ./scripts/dev/vm.sh download       Download NixOS ISO
+#   ./scripts/dev/vm.sh disk           Create qcow2 disk
 #
 # Env:
 #   ISO= VM_RAM= VM_CPUS= VM_SSH_PORT= VM_HEADLESS=1
-#   VM_SHARE_DIR=      VM_SHARE_RW=1     (по умолчанию шара RO)
-#   VM_DISK=           (путь к .qcow2; если задан — подключается как virtio-blk)
-#   VM_DISK_SIZE=30G   (размер при создании)
+#   VM_SHARE_DIR=      VM_SHARE_RW=1
+#   VM_DISK=           VM_DISK_SIZE=30G
 #   QEMU_BIN=
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 log()  { printf '\033[1;32m[+]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[!]\033[0m %s\n' "$*"; }
 die()  { printf '\033[1;31m[x]\033[0m %s\n' "$*" >&2; exit 1; }
@@ -42,9 +41,9 @@ HEADLESS="${VM_HEADLESS:-0}"
 QEMU_BIN="${QEMU_BIN:-qemu-system-x86_64}"
 DISK="${VM_DISK:-}"
 DISK_SIZE="${VM_DISK_SIZE:-30G}"
-ISO_DIR="${VM_ISO_DIR:-$HOME/Downloads/vm}"
-ISO_NAME="${VM_ISO_NAME:-nixos-graphical-x86_64-linux.iso}"
-ISO_URL="${VM_ISO_URL:-https://channels.nixos.org/nixos-unstable/latest-nixos-graphical-x86_64-linux.iso}"
+ISO_DIR="${VM_ISO_DIR:-$REPO_DIR/private/vm}"
+ISO_NAME="${VM_ISO_NAME:-nixos-minimal-x86_64-linux.iso}"
+ISO_URL="${VM_ISO_URL:-https://channels.nixos.org/nixos-unstable/latest-nixos-minimal-x86_64-linux.iso}"
 
 need() { command -v "$1" >/dev/null 2>&1 || die "missing: $1"; }
 pick_qemu() { need "$QEMU_BIN" || die "install qemu (qemu-system-x86_64)"; }
@@ -92,14 +91,24 @@ find_iso() {
   reject_if_comment "${1:-}"
   [ -n "${1:-}" ] && ISO="$1"
   if [ -n "$ISO" ] && [ -f "$ISO" ]; then log "ISO: $ISO"; return; fi
+
+  # 1. в корне репо
   for f in "$REPO_DIR"/*.iso; do
     [ -e "$f" ] || continue
     case "$f" in *x86_64*|*amd64*) ISO="$f"; break ;; esac
   done
-  if [ -z "$ISO" ]; then
-    for f in "$REPO_DIR"/*.iso; do [ -e "$f" ] && { ISO="$f"; break; }; done
-  fi
+  [ -z "$ISO" ] && for f in "$REPO_DIR"/*.iso; do [ -e "$f" ] && { ISO="$f"; break; }; done
   [ -n "$ISO" ] && { log "ISO: $ISO"; return; }
+
+  # 2. в private/vm/
+  for f in "$REPO_DIR"/private/vm/*.iso; do
+    [ -e "$f" ] || continue
+    case "$f" in *x86_64*|*amd64*) ISO="$f"; break ;; esac
+  done
+  [ -z "$ISO" ] && for f in "$REPO_DIR"/private/vm/*.iso; do [ -e "$f" ] && { ISO="$f"; break; }; done
+  [ -n "$ISO" ] && { log "ISO: $ISO"; return; }
+
+  # 3. кеш / скачать
   download_iso && return
   die "no ISO found. Pass one: $0 boot /path/to/nixos.iso"
 }
@@ -113,6 +122,7 @@ find_firmware() {
   FIRMWARE=()
   local code vars
   for pair in \
+    "/usr/share/edk2/x64/OVMF_CODE.4m.fd /usr/share/edk2/x64/OVMF_VARS.4m.fd" \
     "/usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd" \
     "/usr/share/OVMF/OVMF_CODE_4M.fd /usr/share/OVMF/OVMF_VARS_4M.fd" \
     "/usr/share/ovmf/x64/OVMF_CODE.fd /usr/share/ovmf/x64/OVMF_VARS.fd" \
@@ -121,7 +131,6 @@ find_firmware() {
   do
     code="${pair%% *}"; vars="${pair##* }"
     if [ -f "$code" ] && [ -f "$vars" ]; then
-      # Копируем VARS в writable, иначе QEMU захочет писать в /usr
       local vars_copy="${HOME}/.cache/dotfiles/vm-OVMF_VARS.fd"
       mkdir -p "$(dirname "$vars_copy")"
       cp -f "$vars" "$vars_copy"
@@ -131,7 +140,7 @@ find_firmware() {
       return
     fi
   done
-  warn "OVMF not found — booting legacy BIOS (NixOS ISO это умеет)"
+  warn "OVMF not found — booting legacy BIOS"
 }
 
 pick_display() {
@@ -149,13 +158,13 @@ pick_display() {
     DISP=( -display gtk,gl=on );     log "display: gtk"
   else
     DISP=( -vnc :0 -display none -serial mon:stdio )
-    warn "no GUI backend; VNC on localhost:5900 (vncviewer localhost:0)"
+    warn "no GUI backend; VNC on localhost:5900"
   fi
 }
 
 boot_iso() {
   log "booting ISO with repo share: $SHARE_DIR → 9p tag '$SHARE_TAG' (rw=$SHARE_RW)"
-  log "SSH forward: ssh -p $SSH_PORT root@localhost   (set root passwd inside first)"
+  log "SSH forward: ssh -p $SSH_PORT root@localhost"
 
   local GPU=() DEV=() NETDEV=()
   has_device() { "$QEMU_BIN" -device "$1",help >/dev/null 2>&1; }
@@ -199,7 +208,7 @@ run_flake_vm() {
 
 create_disk() {
   need qemu-img
-  DISK="${DISK:-$REPO_DIR/vm/nixos.qcow2}"
+  DISK="${DISK:-$REPO_DIR/private/vm/nixos.qcow2}"
   mkdir -p "$(dirname "$DISK")"
   if [ -f "$DISK" ]; then
     log "already exists: $DISK ($(du -h "$DISK" | cut -f1))"
@@ -207,7 +216,7 @@ create_disk() {
     qemu-img create -f qcow2 "$DISK" "$DISK_SIZE"
     log "created: $DISK ($DISK_SIZE)"
   fi
-  log "use with: VM_DISK=$DISK ./scripts/vm.sh boot"
+  log "use with: VM_DISK=$DISK $0 boot"
 }
 
 usage() {
@@ -218,7 +227,7 @@ usage: $0 {boot|install|run|download|disk} [iso]
   install [iso]   same as boot + install hints
   run             build flake config as runnable VM (needs nix)
   download        download NixOS ISO
-  disk            create qcow2 disk for install
+  disk            create qcow2 disk
 
 env:
   ISO= VM_RAM= VM_CPUS= VM_SSH_PORT= VM_HEADLESS=1
@@ -226,7 +235,7 @@ env:
   VM_DISK=/path/disk.qcow2 VM_DISK_SIZE=30G
   QEMU_BIN=
 
-inside the VM (после загрузки ISO):
+inside the VM:
   sudo -i
   mkdir -p /mnt/host
   mount -t 9p -o trans=virtio,version=9p2000.L $SHARE_TAG /mnt/host
@@ -249,8 +258,7 @@ main() {
       maybe_disk; pick_display
       log "install hints:"
       log "  1) mount -t 9p -o trans=virtio,version=9p2000.L $SHARE_TAG /mnt/host"
-      log "  2) (диск должен быть подключён: VM_DISK=... ./scripts/vm.sh install)"
-      log "  3) смотри README/инструкции — там вся цепочка"
+      log "  2) see private/VM.md"
       boot_iso
       ;;
     run)      run_flake_vm ;;

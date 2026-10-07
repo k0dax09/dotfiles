@@ -4,7 +4,7 @@
 #   shot.sh full     # current screen → save + copy
 #   shot.sh window   # focused window → save + copy
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 DIR="${XDG_PICTURES_DIR:-$HOME/Pictures}/screenshots"
 mkdir -p "$DIR"

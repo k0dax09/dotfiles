@@ -3,7 +3,7 @@
 #   ./wallpaper.sh             # interactive (fuzzel) pick from $WALLPAPER_DIR
 #   ./wallpaper.sh /path/img   # apply a specific image
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 COLOR_PY="$(dirname "$0")/colorscheme.py"
 

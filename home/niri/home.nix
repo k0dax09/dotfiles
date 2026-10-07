@@ -1,13 +1,17 @@
+# Home-manager config: user-level packages + dotfile management.
 { pkgs, config, ... }:
 
 {
-  imports = [ ../../modules/home ];
+  imports = [
+    ../../modules/home
+  ];
 
   home.username = "user";
   home.homeDirectory = "/home/user";
   home.stateVersion = "24.11";
 
   home.sessionPath = [ "~/.local/bin" ];
+
   home.sessionVariables = {
     XDG_CURRENT_DESKTOP = "niri";
     XDG_SESSION_TYPE = "wayland";
@@ -55,46 +59,43 @@
     playerctl
     brightnessctl
     gammastep
-    pavucontrol             # GUI настройки звука
-    pulseaudio              # pactl fallback
+    pavucontrol
 
     # Network / bluetooth tooling
     bluez
     bluez-tools
-    blueman                 # GUI bluetooth
-    networkmanagerapplet    # nm-applet в трее
+    blueman
+    networkmanagerapplet
     cliphist
 
-    # ─── Beauty extras ────────────────────────────────
-    swayosd                 # правильный OSD для громкости/яркости
-    polkit_gnome            # polkit-агент (иначе poweroff из wlogout падает)
-    cava                    # аудио-визуализатор
-    playerctl
-    brightnessctl
+    # Beauty extras
+    swayosd
+    polkit_gnome
+    cava
 
-    # Утилиты
+    # Utils
     jq
     yq
     xdg-utils
-    wlr-randr               # рулить мониторами без xrandr
+    wlr-randr
   ];
 
   # ─── Dotfiles ─────────────────────────────────────
-  home.file.".config/niri"                  = { source = ../../config/niri; recursive = true; };
-  home.file.".config/waybar/config.jsonc"   = { source = ../../config/waybar/config.jsonc; };
-  home.file.".config/waybar/style.css"      = { source = ../../config/waybar/style.css; };
-  home.file.".config/fuzzel/fuzzel.ini"     = { source = ../../config/fuzzel/fuzzel.ini; };
-  home.file.".config/wlogout/layout"        = { source = ../../config/wlogout/layout; };
-  home.file.".config/wlogout/style.css"     = { source = ../../config/wlogout/style.css; };
-  home.file.".config/mako/config"           = { source = ../../config/mako/config; };
-  home.file.".config/nvim"                  = { source = ../../config/nvim; recursive = true; };
-  home.file.".config/tmux/tmux.conf"        = { source = ../../config/tmux/tmux.conf; };
+  home.file.".config/niri"                = { source = ../../config/niri; recursive = true; };
+  home.file.".config/waybar/config.jsonc" = { source = ../../config/waybar/config.jsonc; };
+  home.file.".config/waybar/style.css"    = { source = ../../config/waybar/style.css; };
+  home.file.".config/fuzzel/fuzzel.ini"   = { source = ../../config/fuzzel/fuzzel.ini; };
+  home.file.".config/wlogout/layout"      = { source = ../../config/wlogout/layout; };
+  home.file.".config/wlogout/style.css"   = { source = ../../config/wlogout/style.css; };
+  home.file.".config/mako/config"         = { source = ../../config/mako/config; };
+  home.file.".config/nvim"                = { source = ../../config/nvim; recursive = true; };
+  home.file.".config/tmux/tmux.conf"      = { source = ../../config/tmux/tmux.conf; };
   home.file.".config/alacritty/alacritty.toml" = { source = ../../config/alacritty/alacritty.toml; };
   home.file.".config/alacritty/colors.toml"    = { source = ../../config/alacritty/colors.toml; };
-  home.file.".config/gtk-3.0/gtk.css"       = { source = ../../config/gtk-3.0/gtk.css; };
-  home.file.".config/gtk-4.0/gtk.css"       = { source = ../../config/gtk-4.0/gtk.css; };
+  home.file.".config/gtk-3.0/gtk.css"     = { source = ../../config/gtk-3.0/gtk.css; };
+  home.file.".config/gtk-4.0/gtk.css"     = { source = ../../config/gtk-4.0/gtk.css; };
 
-  # cava — конфиг для визуализатора
+  # cava
   home.file.".config/cava/config".text = ''
     [general]
     bars = 48
@@ -119,7 +120,20 @@
     noise_reduction = 0.77
   '';
 
-  home.file.".local/bin" = { source = ../../scripts; recursive = true; };
+  # ─── ~/.local/bin: плоская сборка из scripts/{session,menu,setup} + lib.sh ───
+  home.file.".local/bin".source = pkgs.runCommand "dotfiles-bin" { } ''
+    mkdir -p $out
+    for d in session menu setup; do
+      if [ -d ${../../scripts}/$d ]; then
+        for f in ${../../scripts}/$d/*.sh ${../../scripts}/$d/*.py; do
+          [ -f "$f" ] || continue
+          cp -a "$f" $out/
+        done
+      fi
+    done
+    cp -a ${../../scripts}/lib.sh $out/
+    chmod +x $out/*
+  '';
 
   home.file.".gtkrc-2.0" = { text = ''
     gtk-theme-name="Adwaita-dark"

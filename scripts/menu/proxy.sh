@@ -9,7 +9,7 @@
 #   ./proxy.sh down
 #   ./proxy.sh status
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 CORE="${ANIREVPN_CORE:-sing-box}"      # sing-box | xray
 SVC="anirevpn"                          # systemd unit for the active core

@@ -3,7 +3,7 @@
 #   ./bluetooth.sh           # interactive menu (power on/off, connect/disconnect)
 #   ./bluetooth.sh status    # "bt: on/off + device" for waybar
 set -euo pipefail
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "$0")/../lib.sh"
 
 BLUETOOTH="bluetoothctl"
 
