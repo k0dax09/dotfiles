@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 # ws.sh — visual workspace switcher (pick a desktop via fuzzel).
-# Info comes from `niri msg workspaces` (active gets a marker).
+# Использует JSON-вывод niri, а не парсинг человекочитаемого текста.
 set -euo pipefail
 . "$(dirname "$0")/lib.sh"
 
-# niri msg events/workspaces output format depends on version; map by name.
-ws_menu() {
-  local active line
-  active="$(niri msg workspaces 2>/dev/null | awk '/active workspace/{print prev} {prev=$0}')"
-  active="${active:-1}"
+active="$(niri msg -j workspaces 2>/dev/null \
+  | jq -r '.[] | select(.is_active) | .idx' \
+  | head -1)"
+active="${active:-1}"
 
+sel="$(
   for i in $(seq 1 9); do
     if [ "$i" = "$active" ]; then
-      printf '●  %s\n' "workspace $i"
+      printf '●  workspace %s\n' "$i"
     else
-      printf '      %s\n' "workspace $i"
+      printf '   workspace %s\n' "$i"
     fi
-    done | menu "workspaces: " | grep -oE '[0-9]+$' | { read -r n; [ -n "$n" ] && niri msg action focus-workspace "$n" 2>/dev/null || true; }
-}
+  done | menu "workspaces: "
+)" || exit 0
 
-ws_menu
+n="$(printf '%s' "$sel" | grep -oE '[0-9]+$' || true)"
+[ -n "$n" ] && niri msg action focus-workspace "$n"

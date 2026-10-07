@@ -1,27 +1,43 @@
 #!/usr/bin/env bash
 #
-# autostart.sh — apps spawned at niri session start (see config/niri/cfg/autostart.kdl).
-# Installed to ~/.local/bin and invoked once per session.
+# autostart.sh — apps spawned at niri session start.
 set -euo pipefail
 
-# Wallpaper + palette (restore last one).
+# ── Обои ────────────────────────────────────────────
 if [ -f "$HOME/.cache/dotfiles/wallpaper" ]; then
-  swaybg -c "$HOME/.cache/dotfiles/wallpaper" -m fill &
+  swaybg -i "$HOME/.cache/dotfiles/wallpaper" -m fill &
 fi
 
-# Clipboard history daemon (cliphist).
+# ── Clipboard history ───────────────────────────────
 clip.sh store &
 
-# Password manager (tray, unlocked on demand).
+# ── Password manager ────────────────────────────────
 keepassxc --minimized --tray-start-hidden &
 
-# Status / tray / notification apps:
-# waybar is already spawned by niri (spawn-at-startup); add trays here:
-# nm-applet &     # networkmanager tray
-# blueman-applet & # bluetooth tray
+# ── Трей-апплеты ────────────────────────────────────
+nm-applet --indicator &
+blueman-applet &
 
-# Blue-light filter placeholder (toggle with ctrl.sh):
+# ── Polkit-агент (для GUI-запросов пароля) ──────────
+POLKIT_AGENT=""
+for candidate in \
+  /run/current-system/sw/libexec/polkit-gnome-authentication-agent-1 \
+  /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 \
+  /usr/libexec/polkit-gnome-authentication-agent-1
+do
+  [ -x "$candidate" ] && { POLKIT_AGENT="$candidate"; break; }
+done
+if [ -n "$POLKIT_AGENT" ]; then
+  "$POLKIT_AGENT" &
+fi
+
+# ── swayosd (красивый OSD) ──────────────────────────
+if command -v swayosd-server >/dev/null 2>&1; then
+  swayosd-server &
+fi
+
+# ── Опционально: ночной фильтр ──────────────────────
 # gammastep -O 4500 &
 
-# Compositor-adjacent helpers (optional):
-# hypridle &   # idle / dpms
+# ── Опционально: idle-лок (управляется сервисом) ────
+# hypridle &

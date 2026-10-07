@@ -15,7 +15,7 @@ case "${1:-region}" in
   region)
     grim -g "$(slurp)" "$OUT"
     if command -v swappy >/dev/null 2>&1; then
-      swappy -f "$OUT"           # annotate; saves back into $OUT
+      swappy -f "$OUT"
       notify "shot" "annotated → $OUT"
     else
       notify "shot" "saved → $OUT"
@@ -28,7 +28,16 @@ case "${1:-region}" in
     notify "shot" "saved → $OUT"
     ;;
   window)
-    local geo; geo="$(niri msg focused-window 2>/dev/null | awk '/Geometry/{print $3}' | tr -d '()')"
+    # Надёжнее взять геометрию из JSON.
+    local geo
+    geo="$(niri msg -j focused-window 2>/dev/null \
+      | jq -r 'if .layout.tile_pos_in_workspace_view and .layout.tile_size
+               then "\(.layout.tile_pos_in_workspace_view.x),\(.layout.tile_pos_in_workspace_view.y) \(.layout.tile_size.x)x\(.layout.tile_size.y)"
+               else empty end')"
+    if [ -z "$geo" ]; then
+      notify "shot" "could not determine focused window geometry"
+      exit 1
+    fi
     grim -g "$geo" "$OUT"
     wl-copy < "$OUT" 2>/dev/null || true
     notify "shot" "saved → $OUT"

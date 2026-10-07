@@ -12,9 +12,9 @@ apply() {
   [ -f "$img" ] || { notify "wallpaper" "not found: $img"; exit 1; }
   cp "$img" "$CURRENT_WALL"
 
-  # Restart swaybg with the new image.
+  # Restart swaybg with the new image (ВАЖНО: -i, не -c).
   pkill -x swaybg 2>/dev/null || true
-  nohup swaybg -c "$CURRENT_WALL" -m fill >/dev/null 2>&1 &
+  nohup swaybg -i "$CURRENT_WALL" -m fill >/dev/null 2>&1 &
   notify "wallpaper" "applied $(basename "$img")"
 
   # Regenerate color palette from the wallpaper.
@@ -23,7 +23,6 @@ apply() {
 
 interactive() {
   local img
-  # Merge the user's folder and the bundled base set into one menu.
   {
     find "$WALLPAPER_DIR" -maxdepth 2 -type f \
       \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' -o -iname '*.webp' \) 2>/dev/null
