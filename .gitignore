@@ -1,21 +1,25 @@
-# Editor / OS junk
+# ─── Приватное ─────────────────────────────────────
+private/
+hosts/*/hardware-configuration.nix
+
+# ─── Editor / OS junk ──────────────────────────────
 .DS_Store
 *.swp
 *.swo
 *~
+\#*\#
 
-# Nix
+# ─── Nix ───────────────────────────────────────────
 result
 result-*
-.direnv
+.direnv/
 .envrc
 
-# Caches
+# ─── Кеши ──────────────────────────────────────────
 .cache/
+__pycache__/
+*.py[cod]
 
-# VM images / ISOs
-*.iso
-*.qcow2
-*.img
-*.vmdk
-vm/
+# ─── Прочее ────────────────────────────────────────
+*.log
+*.pid

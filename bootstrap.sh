@@ -9,7 +9,7 @@
 #   1. Clones (or updates) k0dax09/dotfiles into ~/Dotfiles
 #   2. Symlinks every dir in config/ into ~/.config/ (with backup of conflicts)
 #   3. Links dotfiles that live in $HOME (zsh, etc.)
-#   4. Installs scripts/ into ~/.local/bin and adds it to PATH
+#   4. Installs scripts/ (including lib.sh) into ~/.local/bin and adds it to PATH
 #   5. On NixOS: runs ./scripts/install.sh all (nixos-rebuild + home-manager)
 #
 set -euo pipefail
@@ -54,8 +54,7 @@ link_config() {
     [ "$name" = "templates" ] && continue
 
     local target="$dst/$name"
-    if [ -e "$target" ]; then
-      # Re-point a plain file/dir if it's not a dir we fully own.
+    if [ -e "$target" ] || [ -L "$target" ]; then
       if [ -L "$target" ]; then
         rm -f "$target"
       elif [ -d "$target" ]; then
@@ -83,13 +82,15 @@ link_home_dotfiles() {
     local src="${pair%%:*}"
     local dotname="${pair##*:}"
     local target="$HOME/$dotname"
-    mkdir -p "$(dirname "$src")"
+    # Каталог, куда кладём ссылку, может быть не создан (например для .config/…),
+    # а $HOME есть всегда — но mkdir -p на $HOME безвреден.
+    mkdir -p "$(dirname "$target")"
     ln -sfn "$REPO_DIR/$src" "$target"
     log "linked $dotname -> ~/$dotname"
   done
 }
 
-# ─────────── 4. Scripts → ~/.local/bin ───────────
+# ─────────── 4. Scripts (и lib.sh) → ~/.local/bin ───────────
 install_scripts() {
   local bindir="${XDG_BIN_HOME:-$HOME/.local/bin}"
   mkdir -p "$bindir"
@@ -132,7 +133,7 @@ main() {
   install_scripts
 
   case "${1:-all}" in
-    links)  : ;;                 # just the symlinks above
+    links)  : ;;
     system) build_nixos ;;
     all)    build_nixos ;;
     *)      die "usage: $0 {all|links|system}" ;;
