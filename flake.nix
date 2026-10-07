@@ -26,7 +26,6 @@
     let
       system = "x86_64-linux";
 
-      # Overlays from this repository
       overlays = [
         (import ./pkgs/helium/overlay.nix)
       ];
@@ -35,7 +34,6 @@
         inherit system overlays;
       };
 
-      # Automatically discover hosts that contain default.nix
       hosts = builtins.filter
         (
           name:
@@ -45,7 +43,6 @@
         )
         (builtins.attrNames (builtins.readDir ./hosts));
 
-      # Build one NixOS configuration per host
       nixosConfig =
         hostName:
         nixpkgs.lib.nixosSystem {
@@ -56,9 +53,7 @@
           };
 
           modules = [
-            {
-              nixpkgs.overlays = overlays;
-            }
+            { nixpkgs.overlays = overlays; }
 
             (./hosts + "/${hostName}/default.nix")
 
@@ -78,7 +73,6 @@
           ];
         };
 
-      # Standalone Home Manager configuration per host
       homeConfig =
         hostName:
         home-manager.lib.homeManagerConfiguration {
@@ -116,6 +110,7 @@
           hosts
       );
 
-      "formatter.${system}" = pkgs.nixfmt-rfc-style;
+      # formatter.<system> — вложенный атрибут, а не буквальное имя.
+      formatter.${system} = pkgs.nixfmt-rfc-style;
     };
 }

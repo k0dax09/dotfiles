@@ -1,22 +1,4 @@
 # NixOS module: mini-VPN (sing-box / xray-core, TUN, all traffic via proxy).
-#
-# This is an example of a *custom service module*. Copy/adapt this pattern to
-# add your own personalized services under modules/nixos/services/.
-#
-# Designed to be your *main* VPN: full-TUN with an optional fail-closed
-# kill-switch (nftables) so there are no leaks even when the proxy is down
-# or IPv6 is not carried by the tunnel.
-#
-# Usage in hosts/<host>/default.nix (via modules/nixos aggregator):
-#   services.anirevpn = {
-#     enable = true;
-#     core = "sing-box";            # "sing-box" or "xray"
-#     autoStart = true;             # start at boot (kill-switch already on)
-#     killSwitch = true;            # fail-closed firewall (no leaks)
-#     endpoint = "vpn.example.com:443";   # proxy server host:port (kill-switch allow)
-#     configFile = ./config/proxy/sing-box.json;   # or xray.json
-#   };
-
 { config, lib, pkgs, ... }:
 
 let
@@ -63,14 +45,11 @@ in
       sing-box
       xray
       tun2socks
-      wireguard-tools # (optional: for wireguard fallback)
+      wireguard-tools
       nftables
     ];
 
     # ── Fail-closed kill-switch (nftables) ────────────────────────────────
-    # Applied at boot (before the proxy). While it's active, the only way out
-    # is via the tunnel (anirevpn0), loopback, or the proxy endpoint — so if
-    # sing-box/xray is down or drops IPv6, nothing leaks.
     systemd.services.anirevpn-killswitch = lib.mkIf cfg.killSwitch {
       description = "anirevpn kill-switch (fail-closed firewall)";
       wantedBy = [ "multi-user.target" ];
@@ -91,7 +70,6 @@ in
           ${pkgs.nftables}/bin/nft add rule inet anirevpn_kill out ct state established,related accept
           ${pkgs.nftables}/bin/nft add rule inet anirevpn_kill out oifname "lo" accept
           ${pkgs.nftables}/bin/nft add rule inet anirevpn_kill out oifname "anirevpn0" accept
-          # Bootstrap: allow IPv4 to the proxy endpoint so the core can connect.
           if [ -n "$HOST" ]; then
             ${pkgs.nftables}/bin/nft add rule inet anirevpn_kill out ip daddr "$HOST" udp dport {443,80,51820} accept
             ${pkgs.nftables}/bin/nft add rule inet anirevpn_kill out ip daddr "$HOST" tcp dport {443,80} accept
@@ -103,8 +81,9 @@ in
     };
 
     # ── The actual proxy service ──────────────────────────────────────────
-    systemd.services.anirevpn =
-      lib.mkIf (cfg.core == "sing-box") {
+    # mkMerge — иначе два присваивания systemd.services.anirevpn конфликтуют.
+    systemd.services.anirevpn = lib.mkMerge [
+      (lib.mkIf (cfg.core == "sing-box") {
         description = "mini-VPN (sing-box TUN)";
         after = [ "network-online.target" "anirevpn-killswitch.service" ];
         wants = [ "network-online.target" ];
@@ -119,11 +98,9 @@ in
           NoNewPrivileges = true;
           PrivateTmp = true;
         };
-      };
+      })
 
-    # xray-core variant: local SOCKS/HTTP inbound + tun2socks routes TUN.
-    systemd.services.anirevpn =
-      lib.mkIf (cfg.core == "xray") {
+      (lib.mkIf (cfg.core == "xray") {
         description = "mini-VPN (xray-core + tun2socks)";
         after = [ "network-online.target" "anirevpn-killswitch.service" ];
         wants = [ "network-online.target" ];
@@ -141,6 +118,7 @@ in
           CapabilityBoundingSet = [ "CAP_NET_ADMIN" "CAP_NET_RAW" ];
           AmbientCapabilities = [ "CAP_NET_ADMIN" "CAP_NET_RAW" ];
         };
-      };
+      })
+    ];
   };
 }

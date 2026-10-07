@@ -1,27 +1,15 @@
 # NixOS module: screen locker (swaylock) + auto-lock on idle (hypridle).
-#
-# Usage in hosts/<host>/default.nix (via modules/nixos aggregator):
-#   imports = [ ./modules/nixos/services/lock.nix ];
-#   services.lock = {
-#     enable = true;
-#     screenOffAfter = 45;   # seconds of idle before screens off
-#     lockAfter = 12;        # minutes idle before locking
-#   };
-#
-# The lock command is scripts/lock.sh: swaylock blurred over the current
-# wallpaper. Bind it manually too: Mod+Alt+L → lock.sh
-
 { config, lib, pkgs, ... }:
 
 let
   cfg = config.services.lock;
   inherit (lib) mkEnableOption mkOption types;
 
-  # Build the lock script as a PATH-aware executable for both hypridle and niri.
+  # ВАЖНО: этот файл в modules/nixos/services/, поэтому ../../../ уходит в корень.
   lockCmd = pkgs.writeShellApplication {
     name = "niri-lock";
     runtimeInputs = [ pkgs.swaylock ];
-    text = builtins.readFile ../../scripts/lock.sh;
+    text = builtins.readFile ../../../scripts/lock.sh;
   };
 in
 {
@@ -42,7 +30,6 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [ swaylock ];
 
-    # Idle → lock + power-off monitors.
     services.hypridle = {
       enable = true;
       settings = {
