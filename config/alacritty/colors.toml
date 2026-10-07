@@ -1,31 +1,32 @@
-# alacritty colors — default theme (overwritten by wallpaper.sh's colorscheme)
+# alacritty colors — generated from colorscheme.py (wallpaper palette)
+
 [colors]
 draw_bold_text_with_bright_colors = true
 
 [colors.primary]
-background = "0x1A1B26"
-foreground = "0xC0CAF5"
+background = "#1e1e1e"
+foreground = "#dcdcff"
 
 [colors.cursor]
-text = "0x1A1B26"
-cursor = "0x7AA2F7"
+text = "#1e1e1e"
+cursor = "#8697ba"
 
 [colors.normal]
-black = "0x1A1B26"
-red = "0xF7768E"
-green = "0x9ECE6A"
-yellow = "0xE0AF68"
-blue = "0x7AA2F7"
-magenta = "0xBB9AF7"
-cyan = "0x7DCFFF"
-white = "0xC0CAF5"
+black = "#2e2e2e"
+red = "#f7768e"
+green = "#9ece6a"
+yellow = "#e0af68"
+blue = "#8697ba"
+magenta = "#bb9af7"
+cyan = "#7dcfff"
+white = "#dcdcff"
 
 [colors.bright]
-black = "0x3B4261"
-red = "0xF7768E"
-green = "0x9ECE6A"
-yellow = "0xE0AF68"
-blue = "0x7AA2F7"
-magenta = "0xBB9AF7"
-cyan = "0x7DCFFF"
-white = "0xE0E0E0"
+black = "#424242"
+red = "#f7768e"
+green = "#9ece6a"
+yellow = "#e0af68"
+blue = "#8697ba"
+magenta = "#bb9af7"
+cyan = "#7dcfff"
+white = "#dcdcff"

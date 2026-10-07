@@ -1,14 +1,32 @@
-/* GTK accent overlay — niri dotfiles default (overwritten by wallpaper palette) */
-@define-color accent #7aa2f7;
-@define-color bg_color #1a1b26;
-@define-color base_color #242438;
-@define-color fg_color #c0caf5;
-@define-color selected_bg_color #7aa2f7;
-@define-color selected_fg_color #1a1b26;
+/* GTK accent overlay — generated from colorscheme.py (wallpaper palette).
+   Loaded as ~/.config/gtk-3.0/gtk.css and ~/.config/gtk-4.0/gtk.css.
+   Overrides the base dark theme with the wallpaper accent. */
+@define-color accent #8697ba;
+@define-color bg_color #1e1e1e;
+@define-color base_color #2e2e2e;
+@define-color fg_color #dcdcff;
+@define-color selected_bg_color #8697ba;
+@define-color selected_fg_color #1e1e1e;
 
-* { outline-color: #7aa2f7; }
+* {
+  outline-color: #8697ba;
+}
 
-selection { background-color: #7aa2f7; color: #1a1b26; }
-treeview, list, row:selected { background-color: #7aa2f7; color: #1a1b26; }
-button:checked { background-color: #7aa2f7; color: #1a1b26; }
-progressbar trough progress { background-color: #7aa2f7; }
+selection {
+  background-color: #8697ba;
+  color: #1e1e1e;
+}
+
+treeview, list, row:selected {
+  background-color: #8697ba;
+  color: #1e1e1e;
+}
+
+button:checked {
+  background-color: #8697ba;
+  color: #1e1e1e;
+}
+
+progressbar trough progress {
+  background-color: #8697ba;
+}

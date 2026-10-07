@@ -9,38 +9,24 @@ binds {
     Mod+D                               hotkey-overlay-title="App Launcher" { spawn "fuzzel"; }
     Mod+Space                           hotkey-overlay-title="Quick Run" { spawn "fuzzel --launch-prefix"; }
 
-    // Wallpaper switcher (also regenertes colorscheme).
     Mod+Shift+W                         hotkey-overlay-title="Wallpaper" { spawn "wallpaper.sh"; }
-
-    // Clipboard history (cliphist).
     Mod+V                               hotkey-overlay-title="Clipboard" { spawn "clip.sh"; }
-
-    // Central control panel: volume, brightness, wifi, bluetooth...
     Mod+Shift+C                         hotkey-overlay-title="Control Center" { spawn "ctrl.sh"; }
-
-    // Workspace overview / switcher.
     Mod+Shift+O                         hotkey-overlay-title="Workspaces" { spawn "ws.sh"; }
-
-    // Toggle the waybar top panel.
     Mod+Shift+P                         hotkey-overlay-title="Toggle waybar" { spawn "waybar-toggle"; }
-
-    // Media control menu.
     Mod+Ctrl+M                          hotkey-overlay-title="Media" { spawn "media.sh"; }
-
-    // Mini-VPN toggle (sing-box/xray TUN, scripts/proxy.sh).
-    Mod+Alt+V                          hotkey-overlay-title="VPN" { spawn "proxy.sh"; }
-
-    // Lock the screen (swaylock; auto-lock handled by modules/services/lock.nix).
-    Mod+Alt+L                          hotkey-overlay-title="Lock screen" { spawn "lock.sh"; }
-
-    // Power / session menu.
+    Mod+Alt+V                           hotkey-overlay-title="VPN" { spawn "proxy.sh"; }
+    Mod+Alt+L                           hotkey-overlay-title="Lock screen" { spawn "lock.sh"; }
     Mod+Shift+E                         hotkey-overlay-title="Power menu" { spawn "wlogout"; }
     Mod+Alt+Delete                      hotkey-overlay-title="Power menu" { spawn "wlogout"; }
 
     // ══════════════ Screenshots ══════════════
+    // Print — нативный niri скриншот; shot.sh — на Mod+Shift+S / F2 / F3.
     Print                               { screenshot; }
-    Mod+Shift+3                         { screenshot-screen; }
-    Mod+Shift+4                         { screenshot-window; }
+    Mod+Shift+S                         { spawn "shot.sh" "region"; }
+    Mod+Shift+F2                        { spawn "shot.sh" "full"; }
+    Mod+Shift+F3                        { spawn "shot.sh" "window"; }
+    Mod+Ctrl+R                          repeat=false { spawn "rec.sh" "toggle"; }
 
     // ══════════════ Window ops ══════════════
     Mod+Q                               { close-window; }
@@ -106,7 +92,7 @@ binds {
 
     Mod+Tab                             focus-workspace-previous
 
-    // ══════════════ Media / Volume (with OSD) ══════════════
+    // ══════════════ Media / Volume ══════════════
     XF86AudioRaiseVolume                allow-when-locked=true { spawn "osd.sh" "volume" "up"; }
     XF86AudioLowerVolume                allow-when-locked=true { spawn "osd.sh" "volume" "down"; }
     XF86AudioMute                       allow-when-locked=true { spawn "osd.sh" "volume" "mute"; }
@@ -114,24 +100,15 @@ binds {
     XF86AudioNext                       allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev                       allow-when-locked=true { spawn "playerctl" "previous"; }
 
-    // ══════════════ Brightness (with OSD) ══════════════
+    // ══════════════ Brightness ══════════════
     XF86MonBrightnessUp                 allow-when-locked=true { spawn "osd.sh" "bright" "up"; }
     XF86MonBrightnessDown               allow-when-locked=true { spawn "osd.sh" "bright" "down"; }
-
-    // ══════════════ Screenshots / Recording ══════════════
-    Print                               { spawn "shot.sh" "region"; }
-    Mod+Shift+S                         { spawn "shot.sh" "region"; }
-    Mod+Shift+F2                        { spawn "shot.sh" "full"; }
-    Mod+Shift+F3                        { spawn "shot.sh" "window"; }
-    Mod+Ctrl+R                          repeat=false { spawn "rec.sh" "toggle"; }
 
     // ══════════════ Misc ══════════════
     Mod+O                               repeat=false toggle-overview
     Mod+Shift+Return                    { spawn "wpg-clock"; }
 
-    // Emergency: disable keyboard shortcut inhibitor (fullscreen escapes).
     Mod+Escape                          allow-inhibiting=false toggle-keyboard-shortcuts-inhibit
 
-    // Safety / power-off displays.
     Ctrl+Alt+Shift+Q                     { quit; }
 }

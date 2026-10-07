@@ -1,12 +1,14 @@
 layout {
-        gaps 14
-        center-focused-column "never"
+    gaps 14
+    center-focused-column "never"
 
-        background-color "transparent"
+    background-color "transparent"
 
-        preset-column-widths {
-            proportion 0.33333
-            proportion 0.5
-            proportion 0.66667
-        }
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
     }
+
+    default-column-width { proportion 0.5; }
+}

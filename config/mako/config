@@ -1,30 +1,33 @@
-# mako — niri dotfiles theme (default; overwritten by wallpaper palette)
-font=JetBrains Mono Nerd Font 12
-background-color=#1a1b26dd
-text-color=#c0caf5
-border-color=#7aa2f7
+# mako — generated from colorscheme.py (wallpaper palette)
+font=JetBrains Mono Nerd Font 11
+background-color=#1e1e1eea
+text-color=#dcdcff
+border-color=#8697ba
 border-size=2
-border-radius=10
-padding=10
-margin=8
-width=360
-height=120
+border-radius=14
+padding=14
+margin=10
+width=380
 anchor=top-right
 default-timeout=5000
-max-visible=6
+max-visible=5
 icons=1
-max-icon-size=32
+max-icon-size=48
+icon-border-radius=10
+group-by-app=yes
+grouping=yes
+layer=overlay
 
 [urgency=low]
-background-color=#1a1b26dd
-border-color=#7aa2f7
+background-color=#1e1e1eea
+border-color=#8697ba
 default-timeout=2000
 
 [urgency=normal]
-background-color=#1a1b26dd
-border-color=#7aa2f7
+background-color=#1e1e1eea
+border-color=#8697ba
 
 [urgency=critical]
-background-color=#2a2a33
+background-color=#2e2e2e
 border-color=#f7768e
 default-timeout=0

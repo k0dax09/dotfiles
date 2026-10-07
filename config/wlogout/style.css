@@ -1,8 +1,8 @@
-/* wlogout — power menu theme */
-@define-color bg rgba(24, 24, 29, 0.6);
-@define-color fg #e6e6ea;
-@define-color accent #7aa2f7;
-@define-color hover rgba(122, 162, 247, 0.2);
+/* wlogout — generated from colorscheme.py (wallpaper palette) */
+@define-color bg      #1e1e1eea;
+@define-color fg      #dcdcff;
+@define-color accent  #8697ba;
+@define-color hover   #8697ba33;
 
 window {
   background-color: @bg;

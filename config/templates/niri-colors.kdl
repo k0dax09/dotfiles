@@ -1,0 +1,12 @@
+// niri colors — generated from colorscheme.py (wallpaper palette)
+
+layout {
+    focus-ring {
+        width 3
+        active-gradient from "@{accent}" to "@{magenta}" angle 45
+        inactive-color "@{surface}"
+    }
+    border {
+        off
+    }
+}

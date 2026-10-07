@@ -2,7 +2,7 @@
 
     // Rounded, clipped corners on every window.
     window-rule {
-        geometry-corner-radius 18
+        geometry-corner-radius 14
         clip-to-geometry true
     }
 
@@ -14,14 +14,12 @@
         }
     }
 
-    // Launcher / panels should float.
     window-rule {
         match app-id="fuzzel"
         open-floating true
         default-column-width { fixed 900; }
     }
 
-    // Steam
     window-rule {
         match app-id="steam"
         exclude title=r#"^[Ss]team$"#
@@ -33,9 +31,8 @@
        open-focused false
     }
 
-    // waybar sits at the top; let it float above windows.
     layer-rule {
         match namespace="^waybar"
         place-within-backdrop false
-        exclusive-zone "bottom"
+        exclusive-zone "top"
     }

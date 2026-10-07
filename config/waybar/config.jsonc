@@ -1,21 +1,26 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 32,
-  "spacing": 8,
-  "margin-top": 6,
-  "margin-left": 8,
-  "margin-right": 8,
+  "height": 36,
+  "spacing": 4,
+  "margin-top": 8,
+  "margin-left": 10,
+  "margin-right": 10,
   "margin-bottom": 0,
-  "modules-left": ["niri/workspaces", "niri/window"],
+
+  "modules-left": ["niri/workspaces", "custom/temp", "custom/ram", "custom/cpu"],
   "modules-center": ["clock"],
-  "modules-right": ["custom/media", "bluetooth", "pulseaudio", "network", "custom/vpn", "cpu", "memory", "battery", "tray"],
+  "modules-right": [
+    "custom/cava", "battery", "network", "backlight",
+    "pulseaudio", "custom/layout", "custom/power", "tray"
+  ],
 
   "niri/workspaces": {
-    "format": "{name}",
+    "format": "{index}",
     "format-icons": {
-      "1": "1", "2": "2", "3": "3", "4": "4", "5": "5",
-      "6": "6", "7": "7", "8": "8", "9": "9"
+      "active": "●",
+      "default": "○",
+      "urgent": "◆"
     },
     "on-click": "activate",
     "sort-by-number": true
@@ -27,73 +32,90 @@
   },
 
   "clock": {
-    "format": "{:%H:%M}",
-    "format-alt": "{:%a %d %b %H:%M}",
-    "tooltip-format": "{:%A %d %B %Y}"
+    "format": "󰅐 {:%H:%M}",
+    "format-alt": "󰃭 {:%a %d %b  󰅐 %H:%M}",
+    "tooltip-format": "{:%A %d %B %Y}",
+    "on-click": "gnome-calendar || khal"
   },
 
-  "custom/media": {
-    "exec": "media.sh --current",
-    "exec-if": "playerctl status",
+  "custom/temp": {
+    "exec": "sensors 2>/dev/null | awk '/^Package id 0:|^Tctl:|^Composite:/{gsub(/[+°]C/,\"\",$2); print $2; exit}'",
     "interval": 5,
-    "on-click": "media.sh",
-    "max-length": 34,
-    "signal": 2
+    "format": "󰔄 {}°C",
+    "tooltip": false
   },
 
-  "bluetooth": {
-    "exec": "bluetooth.sh status",
-    "interval": 10,
-    "on-click": "bluetooth.sh",
-    "format": "{}"
+  "custom/ram": {
+    "exec": "free -h | awk '/^Mem:/ {print $3}'",
+    "interval": 5,
+    "format": "󰍛 {}"
   },
 
-  "pulseaudio": {
-    "format": "{icon} {volume}%",
-    "format-muted": "muted",
-    "format-icons": { "default": ["", "", ""] },
-    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
-    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
-    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+  "custom/cpu": {
+    "exec": "top -bn1 | awk '/^%Cpu/{printf \"%d%%\", 100-$8}'",
+    "interval": 3,
+    "format": "󰻠 {}"
   },
 
-  "network": {
-    "format-disconnected": "disconnected",
-    "format-ethernet": "{ifname}",
-    "format-wifi": "{essid} ({signalStrength}%)",
-    "on-click": "wifi.sh",
-    "tooltip-format": "{ifname}: {ipaddr}"
-  },
-
-  "custom/vpn": {
-    "format": "{} 󰅎",
-    "exec": "proxy.sh status",
-    "exec-if": "test -s /etc/anirevpn/config.json",
-    "interval": 10,
-    "on-click": "proxy.sh toggle",
-    "on-click-right": "proxy.sh toggle",
-    "tooltip": "VPN (anirevpn): click to toggle"
-  },
-
-  "cpu": {
-    "format": "cpu {usage}%",
-    "states": { "warning": 85 }
-  },
-
-  "memory": {
-    "format": "ram {}%",
-    "states": { "warning": 85 }
+  "custom/cava": {
+    "exec": "cava -p ~/.config/cava/config",
+    "format": "{}",
+    "tooltip": false
   },
 
   "battery": {
     "format": "{icon} {capacity}%",
-    "format-charging": "{icon} {capacity}%",
-    "format-icons": ["", "", "", ""],
-    "states": { "critical": 10, "warning": 30 }
+    "format-charging": "󰂄 {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "states": { "warning": 30, "critical": 15 },
+    "on-click": "gnome-power-statistics || upower -d"
+  },
+
+  "network": {
+    "format-wifi": "󰤨 {essid}",
+    "format-ethernet": "󰈀 {ifname}",
+    "format-disconnected": "󰤭 offline",
+    "format-linked": "󰤨 {ifname}",
+    "tooltip-format-wifi": "{essid}  {signalStrength}%\n{ipaddr}",
+    "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
+    "on-click": "wifi.sh"
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "󰃟 {percent}%",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁 muted",
+    "format-icons": {
+      "default": ["󰕿", "󰖀", "󰕾"],
+      "headphones": "󰋋",
+      "headset": "󰋎"
+    },
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+
+  "custom/layout": {
+    "exec": "layout.sh",
+    "interval": 1,
+    "format": "󰌌 {}",
+    "tooltip": false
+  },
+
+  "custom/power": {
+    "format": "⏻",
+    "tooltip": false,
+    "on-click": "wlogout"
   },
 
   "tray": {
-    "icon-size": 16,
+    "icon-size": 15,
     "spacing": 8
   }
 }
