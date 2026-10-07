@@ -11,7 +11,7 @@ binds {
 
     Mod+Shift+W                         hotkey-overlay-title="Wallpaper" { spawn "wallpaper.sh"; }
     Mod+V                               hotkey-overlay-title="Clipboard" { spawn "clip.sh"; }
-    Mod+Shift+C                         hotkey-overlay-title="Control Center" { spawn "ctrl.sh"; }
+    Mod+Shift+C                         hotkey-overlay-title="Control Center" { spawn "sh" "-c" "eww open --toggle control-center"; }
     Mod+Shift+O                         hotkey-overlay-title="Workspaces" { spawn "ws.sh"; }
     Mod+Shift+P                         hotkey-overlay-title="Toggle waybar" { spawn "waybar-toggle"; }
     Mod+Ctrl+M                          hotkey-overlay-title="Media" { spawn "media.sh"; }

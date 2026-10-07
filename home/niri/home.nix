@@ -69,6 +69,7 @@
     cliphist
 
     # Beauty extras
+    eww
     swayosd
     polkit_gnome
     cava

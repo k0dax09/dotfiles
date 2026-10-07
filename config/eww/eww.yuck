@@ -1,0 +1,68 @@
+cat > ~/Dotfiles/config/eww/eww.yuck <<'YUCK_EOF'
+;; eww.yuck — control center
+
+(defwindow control-center
+  :monitor 0
+  :geometry (geometry :x "0%" :y "0%" :width "100%" :height "100%" :anchor "center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable "ondemand"
+  (control-center-root))
+
+(defwidget backdrop []
+  (eventbox :onclick "eww close control-center"
+    (box :class "cc-backdrop" :vexpand true :hexpand true)))
+
+(defwidget control-center-root []
+  (box :class "cc-root" :orientation "v" :space-evenly false
+    (backdrop)
+    (box :class "cc-card" :orientation "v" :space-evenly false
+      (cc-header)
+
+      (cc-slider "Volume"     "vol"  "scripts/volume.sh")
+      (cc-slider "Brightness" "brt"  "scripts/brightness.sh")
+
+      (cc-row "Wi-Fi"     "wifi"  "scripts/wifi.sh")
+      (cc-row "Bluetooth" "bt"    "scripts/bluetooth.sh")
+
+      (cc-action "Wallpaper" "wallpaper.sh")
+      (cc-action "Nightlight" "config/eww/scripts/nightlight.sh")
+
+      (box :class "cc-actions" :orientation "h" :space-evenly true
+        (cc-button "Lock"  "lock.sh")
+        (cc-button "Power" "wlogout")))))
+
+(defwidget cc-header []
+  (box :class "cc-header"
+    (label :class "cc-title" :text "Control Center")))
+
+(defwidget cc-slider [label icon cmd]
+  (box :class "cc-row cc-slider-row" :orientation "h" :space-evenly false
+    (label :class "cc-icon"   :text icon)
+    (label :class "cc-label"  :text label)
+    (scale :class "cc-scale"
+      :value {cmd + " get"}
+      :onchange {cmd + " set {}"}
+      :min 0 :max 100
+      :active true
+      :draw-value false)
+    (label :class "cc-value" :text {cmd + " get-formatted"})))
+
+(defwidget cc-row [label icon cmd]
+  (eventbox :onclick {cmd + " click"}
+    (box :class "cc-row" :orientation "h" :space-evenly false
+      (label :class "cc-icon"  :text icon)
+      (label :class "cc-label" :text label)
+      (label :class "cc-status" :text {cmd + " status"}))))
+
+(defwidget cc-action [label cmd]
+  (eventbox :onclick cmd
+    (box :class "cc-row" :orientation "h" :space-evenly false
+      (label :class "cc-label" :text label)
+      (label :class "cc-arrow" :text ""))))
+
+(defwidget cc-button [label cmd]
+  (eventbox :onclick cmd
+    (box :class "cc-button"
+      (label :text label))))
+YUCK_EOF

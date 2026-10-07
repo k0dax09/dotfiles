@@ -1,0 +1,125 @@
+cat > ~/Dotfiles/config/eww/eww.scss <<'SCSS_EOF'
+/* eww.scss — control center (default; overwritten by colorscheme.py) */
+$bg      : rgba(20, 20, 26, 0.75);
+$surface : rgba(42, 42, 51, 0.95);
+$fg      : #e6e6ea;
+$muted   : #8f8f9a;
+$accent  : #7aa2f7;
+$red     : #f7768e;
+$green   : #9ece6a;
+
+* { font-family: "JetBrains Mono Nerd Font", "Noto Sans", sans-serif; }
+
+.cc-backdrop {
+  background-color: $bg;
+}
+
+.cc-root {
+  padding: 80px 0;
+}
+
+.cc-card {
+  background-color: $surface;
+  border-radius: 20px;
+  border: 2px solid $accent;
+  padding: 24px 28px;
+  margin: 0 0;
+  min-width: 480px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.cc-header {
+  margin-bottom: 16px;
+}
+
+.cc-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: $fg;
+}
+
+.cc-row {
+  padding: 10px 12px;
+  margin: 4px 0;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.cc-row:hover {
+  background-color: rgba(122, 162, 247, 0.15);
+}
+
+.cc-icon {
+  font-size: 16px;
+  color: $accent;
+  min-width: 28px;
+}
+
+.cc-label {
+  font-size: 14px;
+  color: $fg;
+  min-width: 130px;
+}
+
+.cc-status {
+  font-size: 13px;
+  color: $muted;
+}
+
+.cc-value {
+  font-size: 13px;
+  color: $accent;
+  min-width: 50px;
+}
+
+.cc-arrow {
+  font-size: 14px;
+  color: $muted;
+}
+
+.cc-scale {
+  min-width: 200px;
+  margin: 0 12px;
+}
+
+.cc-scale trough {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  min-height: 8px;
+}
+
+.cc-scale highlight {
+  background-color: $accent;
+  border-radius: 6px;
+}
+
+.cc-scale slider {
+  background-color: $fg;
+  border-radius: 10px;
+  min-width: 14px;
+  min-height: 14px;
+  margin: -3px 0;
+}
+
+.cc-actions {
+  margin-top: 16px;
+}
+
+.cc-button {
+  background-color: rgba(122, 162, 247, 0.15);
+  border: 1px solid $accent;
+  border-radius: 10px;
+  padding: 8px 20px;
+  margin: 0 4px;
+}
+
+.cc-button:hover {
+  background-color: $accent;
+  color: #1a1b26;
+}
+
+.cc-button label {
+  font-size: 14px;
+  font-weight: 600;
+}
+SCSS_EOF

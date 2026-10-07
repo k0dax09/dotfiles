@@ -36,6 +36,12 @@ if command -v swayosd-server >/dev/null 2>&1; then
   swayosd-server &
 fi
 
+# eww daemon
+if command -v eww >/dev/null 2>&1; then
+  eww daemon &
+  sleep 0.5
+fi
+
 # ── Опционально: ночной фильтр ──────────────────────
 # gammastep -O 4500 &
 
